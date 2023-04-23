@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>TV Program</title>
+        <style>
+            button, table, input{
+                display: block;
+                margin: auto;
+                margin-top: 7px;
+            }
+
+            table, th, td {
+                border: 1px solid;
+                border-color: #7e6f30;
+            }
+
+            .button{
+                background-color: rgba(51, 51, 51, 0.05);
+                border-radius: 8px;
+                border-width: 0;
+                color: #333333;
+                cursor: pointer;
+                font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+                font-size: 14px;
+                font-weight: 500;
+                line-height: 20px;
+                padding: 10px 12px;
+            }
+
+        </style>
+    </head>
+        
+    <body>
+
+            <input type="text" id="search" onkeyup="search()" placeholder="Search for title..">
+            <table id="id"></table>
+            <button class="button" id="button-1">SHOW ALL</button>
+            <button class="button" id="button-2">SHOW MOVIES</button>
+            <button class="button" id="button-3">SHOW TV SERIES</button>
+            <button class="button" id="button-4">SHOW ANIMATIONS</button>
+
+        <script> 
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.querySelector('#button-1').addEventListener('click', ()=>{show(this, 'all')});
+                    document.querySelector('#button-2').addEventListener('click', ()=>{show(this, 'movie')});
+                    document.querySelector('#button-3').addEventListener('click', ()=>{show(this, 'tv-series')});
+                    document.querySelector('#button-4').addEventListener('click', ()=>{show(this, 'animation')});
+                }
+            };
+            xmlhttp.open("GET", "tv_program.xml", true);
+            xmlhttp.send();
+
+            function show(xml, type) {
+                var i;
+                var my_xml = xml.responseXML;
+                var table =
+                    '<tr><th></th><th>TITLE</th><th>AGE</th><th>TIME</th><th>LENGTH</th><th>DIRECTORS</th><th>YEAR</th></tr>';
+                var x = my_xml.getElementsByTagName("program");
+                if(type=='all'){
+                    for (i = 0; i < x.length; i++) {                    
+                        if(x[i].getAttribute("type")=="tv-series"){
+                            table += "<tr><td>" +
+                            x[i].getElementsByTagName('poster')[0].childNodes[0].nodeValue + "</td><td>" +
+                            x[i].getElementsByTagName('title')[0].childNodes[0].nodeValue + "\n" + x[i].children[0].getAttribute("episode") + "</td><td>" +
+                            x[i].children[0].getAttribute('age') + "</td><td>" +
+                            x[i].children[3].getAttribute('date') + "\n" + x[i].getElementsByTagName("streaming-time")[0].childNodes[0].nodeValue + "</td><td>" +
+                            x[i].children[3].getAttribute('length') + "</td><td>" +
+                            x[i].getElementsByTagName('director')[0].childNodes[0].nodeValue + "</td><td>" +
+                            x[i].children[0].getAttribute('year') + "</td></tr>";
+                        }else{
+                            table += "<tr><td>" +
+                            x[i].getElementsByTagName('poster')[0].childNodes[0].nodeValue + "</td><td>" +
+                            x[i].getElementsByTagName('title')[0].childNodes[0].nodeValue + "</td><td>" +
+                            x[i].children[0].getAttribute('age') + "</td><td>" +
+                            x[i].children[3].getAttribute('date') + "\n" + x[i].getElementsByTagName("streaming-time")[0].childNodes[0].nodeValue + "</td><td>" +
+                            x[i].children[3].getAttribute('length') + "</td><td>" +
+                            x[i].getElementsByTagName('director')[0].childNodes[0].nodeValue + "</td><td>" +
+                            x[i].children[0].getAttribute('year') + "</td></tr>";
+                        }
+                    }
+                }else if(type=='tv-series'){
+                    for (i = 0; i < x.length; i++) {
+                        if(x[i].getAttribute("type")==type){
+                            table += "<tr><td>" +
+                            x[i].getElementsByTagName('poster')[0].childNodes[0].nodeValue + "</td><td>" +
+                            x[i].getElementsByTagName('title')[0].childNodes[0].nodeValue + "\n" + x[i].children[0].getAttribute("episode") + "</td><td>" +
+                            x[i].children[0].getAttribute('age') + "</td><td>" +
+                            x[i].children[3].getAttribute('date') + "\n" + x[i].getElementsByTagName("streaming-time")[0].childNodes[0].nodeValue + "</td><td>" +
+                            x[i].children[3].getAttribute('length') + "</td><td>" +
+                            x[i].getElementsByTagName('director')[0].childNodes[0].nodeValue + "</td><td>" +
+                            x[i].children[0].getAttribute('year') + "</td></tr>";
+                        }
+                    }
+                }else{
+                    for (i = 0; i < x.length; i++) {
+                        if(x[i].getAttribute("type")==type){
+                            table += "<tr><td>" +
+                            x[i].getElementsByTagName('poster')[0].childNodes[0].nodeValue + "</td><td>" +
+                            x[i].getElementsByTagName('title')[0].childNodes[0].nodeValue + "</td><td>" +
+                            x[i].children[0].getAttribute('age') + "</td><td>" +
+                            x[i].children[3].getAttribute('date') + "\n" + x[i].getElementsByTagName("streaming-time")[0].childNodes[0].nodeValue + "</td><td>" +
+                            x[i].children[3].getAttribute('length') + "</td><td>" +
+                            x[i].getElementsByTagName('director')[0].childNodes[0].nodeValue + "</td><td>" +
+                            x[i].children[0].getAttribute('year') + "</td></tr>";            
+                        }
+                    }
+                }
+                document.getElementById("id").innerHTML = table;
+            }
+
+            function search() {
+                var input, filter, table, tr, td, i, txtValue;
+                input = document.getElementById("search");
+                filter = input.value.toUpperCase();
+                table = document.getElementById("id");
+                tr = table.getElementsByTagName("tr");
+                for (i = 0; i < tr.length; i++) {
+                    td = tr[i].getElementsByTagName("td")[1];
+                        if (td) {
+                        txtValue = td.textContent || td.innerText;
+                            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                tr[i].style.display = "";
+                            } else {
+                                tr[i].style.display = "none";
+                            }
+                        }       
+                }
+            }
+        </script>
+    </body>
+</html>

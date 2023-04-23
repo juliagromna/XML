@@ -1,0 +1,12 @@
+<!ELEMENT tvprogram (program+)>
+<!ATTLIST program type (movie|tv-series|animation) #REQUIRED>
+<!ELEMENT program (title,director,poster,streaming-time)>
+<!ATTLIST title year CDATA #REQUIRED
+                age CDATA "12+"
+                episode CDATA #IMPLIED>
+<!ATTLIST streaming-time date CDATA "13-03-2023"
+                        length CDATA #REQUIRED>
+<!ELEMENT title (#PCDATA)*>
+<!ELEMENT director (#PCDATA)*>
+<!ELEMENT poster (#PCDATA)*>
+<!ELEMENT streaming-time (#PCDATA)*>
